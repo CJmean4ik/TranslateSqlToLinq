@@ -1,0 +1,67 @@
+﻿use PracticDB;			
+			
+			
+			
+SELECT * 			
+INTO #TabeleOnCimulativeTotal			
+FROM (SELECT *,			
+			SUM(quantity) OVER (ORDER BY quantity DESC) AS cumulative_total
+			FROM PracticDB.dbo.Items  
+			WHERE quantity = 10 or quantity > 10 and quantity < 160) as MaxQuantityTotal
+WHERE cumulative_total < 160			
+			
+
+
+
+						
+SELECT * 			
+INTO #TabeleSecondOnCimulativeTotal			
+FROM(			
+SELECT *,			
+	SUM(quantity) OVER (ORDER BY quantity DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_total		
+	FROM PracticDB.dbo.Items  		
+			WHERE quantity < 10 ) as maxs
+WHERE cumulative_total < 40 OR cumulative_total = 40			
+			
+			
+DECLARE 			
+@MaxTotal INT,			
+@Result INT,			
+@NewMaxTotal INT,			
+@MaxTotalId INT,			
+@MaxTotalItem NVARCHAR(10)			
+			
+SET @MaxTotal = (SELECT MAX(cumulative_total) FROM #TabeleOnCimulativeTotal) 			
+SET @MaxTotalId = (SELECT id FROM #TabeleOnCimulativeTotal WHERE cumulative_total = @MaxTotal)			
+SET @MaxTotalItem = (SELECT item FROM  PracticDB.dbo.Items WHERE Id = @MaxTotalId + 1)			
+			
+SET IDENTITY_INSERT #TabeleOnCimulativeTotal ON			
+			
+IF @MaxTotal != 160			
+  SET @Result = 160 - @MaxTotal			
+  SET @NewMaxTotal = @MaxTotal + @Result			
+  IF @NewMaxTotal = 160 			
+  INSERT INTO #TabeleOnCimulativeTotal (id,Item,quantity,cumulative_total)			
+  VALUES(@MaxTotalId + 1, @MaxTotalItem, @Result, @NewMaxTotal)			
+  			
+  Select * FROM #TabeleOnCimulativeTotal			
+			
+  SET IDENTITY_INSERT #TabeleOnCimulativeTotal Off			
+			
+  SET IDENTITY_INSERT #TabeleSecondOnCimulativeTotal ON			
+			
+If (SELECT MAX(cumulative_total) FROM  #TabeleSecondOnCimulativeTotal) != 40			
+	SET @MaxTotal = (SELECT MAX(cumulative_total) FROM #TabeleSecondOnCimulativeTotal) 		
+    SET @MaxTotalId = (SELECT id FROM #TabeleSecondOnCimulativeTotal WHERE cumulative_total = @MaxTotal)			
+    SET @MaxTotalItem = (SELECT item FROM  PracticDB.dbo.Items WHERE Id = @MaxTotalId + 1)			
+		  SET @Result = 40 - @MaxTotal	
+          SET @NewMaxTotal = @MaxTotal + @Result			
+		  IF @NewMaxTotal = 40	
+		  INSERT INTO #TabeleSecondOnCimulativeTotal (id,Item,quantity,cumulative_total)	
+		  VALUES(@MaxTotalId + 1, @MaxTotalItem, @Result, @NewMaxTotal)	
+  			
+          Select * FROM #TabeleSecondOnCimulativeTotal			
+IF @MaxTotal = 40 			
+Select * FROM #TabeleSecondOnCimulativeTotal			
+			
+SET IDENTITY_INSERT #TabeleSecondOnCimulativeTotal Off			
