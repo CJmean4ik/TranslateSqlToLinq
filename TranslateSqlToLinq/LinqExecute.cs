@@ -50,9 +50,7 @@ namespace TranslateSqlToLinq
                 firstSelection.Add(new { newElemen.Id, newElemen.item, newElemen.quantity, newElemen.cumulative });
             }
             return firstSelection.Select(s => new NewSourseItem(s.Id, s.item,s.quantity,s.cumulative)).ToList();
-        }
-
-        
+        }        
         public List<NewSourseItem> GetAllItemsBySecondCondition()
         {
             if (_binderSourse == null)
@@ -81,7 +79,6 @@ namespace TranslateSqlToLinq
             }
             return secondSelection.Select(s => new NewSourseItem(s.Id, s.item, s.quantity, s.cumulative)).ToList();
         }
-
 
         private int CalcCumulativeTotal(int previousQuantRes, int currentQuant) => previousQuantRes + currentQuant;      
         private (int Id, string item, int quantity, int cumulative) FindingDifference(int maxTotal, int id,TypeCondition condition)

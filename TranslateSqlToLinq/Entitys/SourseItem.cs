@@ -5,7 +5,7 @@ using System.Text;
 namespace TranslateSqlToLinq
 {
    public class SourseItem
-    {
+   {
         public int Id { get; set; }
         public string item { get; set; }
         public int quantity { get; set; }
@@ -16,6 +16,6 @@ namespace TranslateSqlToLinq
             this.item = item;
             this.quantity = quantity;
         }
-    }
+   }
 
 }
