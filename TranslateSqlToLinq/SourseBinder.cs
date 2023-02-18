@@ -2,7 +2,7 @@
 
 namespace TranslateSqlToLinq
 {
-    static class SourseBinder
+    public class SourseBinder
     {
         public static List<SourseItem> GetSoursesItem()
         {
@@ -10,7 +10,7 @@ namespace TranslateSqlToLinq
             {
             new SourseItem(1,"139/30",10),
             new SourseItem(2, "167/20",10),
-            new SourseItem(3,"167/30",72),
+            new SourseItem(3,"167/30",80),
             new SourseItem(4, "23/30",64),
             new SourseItem(5,"232/25",49),
             new SourseItem(6, "236/20",68),

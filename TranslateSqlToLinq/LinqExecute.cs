@@ -19,7 +19,15 @@ namespace TranslateSqlToLinq
         /// <summary>
         /// Метод который обрабатывает колекцию по условию №1:
         /// </summary>
-        /// <returns>List<NewSourseItem> который содержит столбец total для нарастающего итога</returns>
+        /// <remarks>
+        /// Действия: <br />
+        /// Получаетет элементы которые больше 10 и меньше 160 <br />
+        /// Сортирует по убыванию <br />
+        /// Считает нарастающий итог по полю quantity <br />
+        /// Выбирает записи, пока нарастаюищй тог меньше или равен 160 <br />
+        /// Выполняет перерасчёт, если нарастающий итог не равен 160 
+        /// </remarks>
+        /// <returns>колекция NewSourseItem</returns>
         /// <exception cref="NullReferenceException"></exception>
         public List<NewSourseItem> GetAllItemsByFirstCondition()
         {
@@ -50,7 +58,21 @@ namespace TranslateSqlToLinq
                 firstSelection.Add(new { newElemen.Id, newElemen.item, newElemen.quantity, newElemen.cumulative });
             }
             return firstSelection.Select(s => new NewSourseItem(s.Id, s.item,s.quantity,s.cumulative)).ToList();
-        }        
+        }
+
+        /// <summary>
+        /// Метод который обрабатывает колекцию по условию №2:
+        /// </summary>
+        /// <remarks>
+        /// Действия: <br />
+        /// Получаетет элементы которые  меньше 10 <br />
+        /// Сортирует по возрастанию <br />
+        /// Считает нарастающий итог по полю quantity <br />
+        /// Выбирает записи, пока нарастаюищй итог меньше или равен 40 <br />
+        /// Выполняет перерасчёт, если нарастающий итог не равен 40 
+        /// </remarks>
+        /// <returns>колекция NewSourseItem</returns>
+        /// <exception cref="NullReferenceException"></exception>
         public List<NewSourseItem> GetAllItemsBySecondCondition()
         {
             if (_binderSourse == null)
