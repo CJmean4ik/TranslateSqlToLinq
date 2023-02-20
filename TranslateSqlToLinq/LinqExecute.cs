@@ -80,7 +80,7 @@ namespace TranslateSqlToLinq
 
             _resultant = 0;
             var secondSelection = _sourses.Where(w => w.quantity <= 10)
-                .OrderBy(or => or.quantity)
+                .OrderByDescending(or => or.quantity)
                 .Select(s => 
                 {
                     int cumulative = CalcCumulativeTotal(_resultant, s.quantity);
