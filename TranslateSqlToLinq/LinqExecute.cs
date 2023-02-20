@@ -30,11 +30,13 @@ namespace TranslateSqlToLinq
         /// <exception cref="NullReferenceException"></exception>
         public List<NewSourseItem> GetAllItemsByFirstCondition()
         {
+            int cumulative = 0;
+            int _resultant = 0;
+
             if (_binderSourse == null)
                 throw new NullReferenceException($"Делегат {_binderSourse.GetType().FullName} не содержит метода для вызова");      
             if (_sourses == null) _sourses = _binderSourse.Invoke();
 
-            int _resultant = 0;
             var listOrderSourse = new List<NewSourseItem>();
             var firstSelection = _sourses
                .Where(w => w.quantity >= 10 && w.quantity <= 160)
@@ -42,18 +44,20 @@ namespace TranslateSqlToLinq
                .ToList();
             foreach (var obj in firstSelection)
             {
-                int cumulative = CalcCumulativeTotal(_resultant, obj.quantity);
-                _resultant = cumulative;
+
+                if (cumulative == 160) break;
+
+                cumulative = CalcCumulativeTotal(_resultant, obj.quantity);                 
                 if (cumulative <= 160)
                 {
                     listOrderSourse.Add(new NewSourseItem(obj.Id, obj.item, obj.quantity, cumulative));
+                    _resultant = cumulative;
                     continue;
                 }
                 else
                 {
-                    int result = 160 - cumulative;
-                    int newMaxTotal = cumulative + result;
-                    listOrderSourse.Add(new NewSourseItem(obj.Id, obj.item, result, newMaxTotal));
+                    int result = 160 - _resultant;
+                    listOrderSourse.Add(new NewSourseItem(obj.Id, obj.item, result, 160));
                     break;
                 }
             }
@@ -76,32 +80,35 @@ namespace TranslateSqlToLinq
         /// <exception cref="NullReferenceException"></exception>
         public List<NewSourseItem> GetAllItemsBySecondCondition()
         {
+            int cumulative = 0;
+            int _resultant = 0;
+
             if (_binderSourse == null)
                 throw new NullReferenceException($"Делегат {_binderSourse.GetType().FullName} не содержит метода для вызова");
           
             if (_sourses == null) _sourses = _binderSourse.Invoke();
 
-            int _resultant = 0;
-            var secondSelection = _sourses.Where(w => w.quantity <= 10)
-                .OrderBy(or => or.quantity)            
+            var secondSelection = _sourses.Where(w => w.quantity < 10)
+                .OrderByDescending(or => or.quantity)            
                 .ToList();
 
             var listOrderSourse = new List<NewSourseItem>();
 
             foreach (var obj in secondSelection)
             {
-                int cumulative = CalcCumulativeTotal(_resultant, obj.quantity);
-                _resultant = cumulative;
+                if (cumulative == 40) break;
+
+                cumulative = CalcCumulativeTotal(_resultant, obj.quantity);
                 if (cumulative <= 40)
                 {
                     listOrderSourse.Add(new NewSourseItem(obj.Id, obj.item, obj.quantity, cumulative));
+                    _resultant = cumulative;
                     continue;
                 }
                 else
                 {
-                    int result = 40 - cumulative;
-                    int newMaxTotal = cumulative + result;
-                    listOrderSourse.Add(new NewSourseItem(obj.Id, obj.item, result, newMaxTotal));
+                    int result = 40 - _resultant;
+                    listOrderSourse.Add(new NewSourseItem(obj.Id, obj.item, result, 40));
                     break;
                 }
             }
