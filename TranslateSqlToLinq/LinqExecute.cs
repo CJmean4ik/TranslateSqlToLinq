@@ -79,7 +79,7 @@ namespace TranslateSqlToLinq
             if (_sourses == null) _sourses = _binderSourse.Invoke();
 
             _resultant = 0;
-            var secondSelection = _sourses.Where(w => w.quantity <= 10)
+            var secondSelection = _sourses.Where(w => w.quantity < 10)
                 .OrderByDescending(or => or.quantity)
                 .Select(s => 
                 {
