@@ -50,7 +50,7 @@ namespace TranslateSqlToLinq
                .ToList();
               
             var maxTotalRecord = firstSelection.LastOrDefault();
-            if (maxTotalRecord.quantity != 160)
+            if (maxTotalRecord.Total != 160)
             {
                 var newElemen = FindingDifference(maxTotalRecord.Total, maxTotalRecord.Id, TypeCondition.FirstCondition);
                 firstSelection.Add(newElemen);
