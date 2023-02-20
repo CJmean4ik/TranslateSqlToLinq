@@ -44,20 +44,18 @@ namespace TranslateSqlToLinq
 
                    int cumulative = CalcCumulativeTotal(_resultant, s.quantity);
                    _resultant = cumulative;
-                   return new { s.Id, s.item, s.quantity, cumulative };
+                   return new NewSourseItem( s.Id, s.item, s.quantity, cumulative );
                })
-               .Where(w => w.cumulative <= 160)
+               .Where(w => w.Total <= 160)
                .ToList();
-
-            int maxTotal = firstSelection.Max(mx => mx.cumulative);
-            int maxTotalId = firstSelection.Where(w => w.cumulative == maxTotal).Select(s => s.Id).FirstOrDefault();
-
-            if (maxTotal != 160)
+              
+            var maxTotalRecord = firstSelection.LastOrDefault();
+            if (maxTotalRecord.quantity != 160)
             {
-                var newElemen = FindingDifference(maxTotal, maxTotalId, TypeCondition.FirstCondition);
-                firstSelection.Add(new { newElemen.Id, newElemen.item, newElemen.quantity, newElemen.cumulative });
+                var newElemen = FindingDifference(maxTotalRecord.Total, maxTotalRecord.Id, TypeCondition.FirstCondition);
+                firstSelection.Add(newElemen);
             }
-            return firstSelection.Select(s => new NewSourseItem(s.Id, s.item,s.quantity,s.cumulative)).ToList();
+            return firstSelection;
         }
 
         /// <summary>
@@ -87,31 +85,29 @@ namespace TranslateSqlToLinq
                 {
                     int cumulative = CalcCumulativeTotal(_resultant, s.quantity);
                     _resultant = cumulative;
-                    return new { s.Id, s.item, s.quantity, cumulative };
+                    return new NewSourseItem( s.Id, s.item, s.quantity, cumulative );
                 })
-                .Where(w => w.cumulative <= 40) 
+                .Where(w => w.Total <= 40) 
                 .ToList();
-           
-            int maxTotal = secondSelection.Max(mx => mx.cumulative);
-            int maxTotalId = secondSelection.Where(w => w.cumulative == maxTotal).Select(s => s.Id).FirstOrDefault();
-            if (maxTotal != 40)
+
+            var maxTotalObject = secondSelection.LastOrDefault();
+            if (maxTotalObject.Total != 40)
             {
-                var newElemen = FindingDifference(maxTotal, maxTotalId, TypeCondition.SecondCondition);
-                secondSelection.Add(new { newElemen.Id, newElemen.item, newElemen.quantity, newElemen.cumulative });
+                var newElemen = FindingDifference(maxTotalObject.Total, maxTotalObject.Id, TypeCondition.SecondCondition);
+                secondSelection.Add(newElemen);
             }
-            return secondSelection.Select(s => new NewSourseItem(s.Id, s.item, s.quantity, s.cumulative)).ToList();
+            return secondSelection;
         }
 
         private int CalcCumulativeTotal(int previousQuantRes, int currentQuant) => previousQuantRes + currentQuant;      
-        private (int Id, string item, int quantity, int cumulative) FindingDifference(int maxTotal, int id,TypeCondition condition)
+        private NewSourseItem FindingDifference(int maxTotal, int id,TypeCondition condition)
         {
             int result = condition == TypeCondition.FirstCondition ? 160 - maxTotal : 40 - maxTotal;
             int newMaxTotal = maxTotal + result;
                     if (newMaxTotal == 160)
-                        return (id + 1, _sourses[id].item, result, newMaxTotal);     
-                    
+                        return new NewSourseItem(id + 1, _sourses[id].item, result, newMaxTotal);                        
                     if (newMaxTotal == 40)
-                        return (id + 1, _sourses[id].item, result, newMaxTotal);                         
+                        return new NewSourseItem(id + 1, _sourses[id].item, result, newMaxTotal);                         
             return default;
         }
     }
