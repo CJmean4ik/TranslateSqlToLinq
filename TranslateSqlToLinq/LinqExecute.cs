@@ -105,20 +105,13 @@ namespace TranslateSqlToLinq
         private int CalcCumulativeTotal(int previousQuantRes, int currentQuant) => previousQuantRes + currentQuant;      
         private (int Id, string item, int quantity, int cumulative) FindingDifference(int maxTotal, int id,TypeCondition condition)
         {
-            if (condition == TypeCondition.FirstCondition)
-            {             
-                    int result = 160 - maxTotal;
-                    int newMaxTotal = maxTotal + result;
+            int result = condition == TypeCondition.FirstCondition ? 160 - maxTotal : 40 - maxTotal;
+            int newMaxTotal = maxTotal + result;
                     if (newMaxTotal == 160)
-                        return (id + 1, _sourses[id].item, result, newMaxTotal);               
-            }
-            if (condition == TypeCondition.SecondCondition)
-            {              
-                    int result = 40 - maxTotal;
-                    int newMaxTotal = maxTotal + result;
+                        return (id + 1, _sourses[id].item, result, newMaxTotal);     
+                    
                     if (newMaxTotal == 40)
-                        return (id + 1, _sourses[id].item, result, newMaxTotal);              
-            }
+                        return (id + 1, _sourses[id].item, result, newMaxTotal);                         
             return default;
         }
     }
